@@ -7,6 +7,10 @@ using namespace std;
 
 const int screenWidth = 800;
 const int screenHeight = 600;
+Color Green = Color{38, 185, 154, 255};
+Color Dark_Green = Color{20, 160, 133, 255};
+Color Light_Green = Color{129, 204, 184, 255};
+Color Yellow = Color{243, 213, 91, 255};
 
 int main()
 {
@@ -116,16 +120,17 @@ int main()
 
         // Draw everything
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(Dark_Green);
+        DrawRectangle(screenWidth / 2, 0, screenWidth / 2, screenHeight, Green);
+        DrawCircle(screenWidth / 2, screenHeight / 2, 150, Light_Green);
+        DrawLine(screenWidth / 2, 0, screenWidth / 2, screenHeight, WHITE);
         
         // Draw the ball
-        DrawCircle(static_cast<int>(ballX), static_cast<int>(ballY), 20, BLUE);
+        DrawCircle(static_cast<int>(ballX), static_cast<int>(ballY), 20, YELLOW);
         // Draw the player paddle
-        DrawRectangle(playerBoardX, playerBoardY, playerBoardWidth, playerBoardHeight, RED);
+        DrawRectangle(playerBoardX, playerBoardY, playerBoardWidth, playerBoardHeight, WHITE);
         // Draw the AI paddle
-        DrawRectangle(AIBoardX, AIBoardY, AIBoardWidth, AIBoardHeight, RED);
-        // Draw the FPS counter
-        DrawFPS(10, 10);
+        DrawRectangle(AIBoardX, AIBoardY, AIBoardWidth, AIBoardHeight, WHITE);
         
         // Draw the scores
         DrawText(TextFormat("Player Score: %d", playerScore), 10, 50, 20, BLACK);
