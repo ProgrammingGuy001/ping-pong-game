@@ -1,5 +1,7 @@
 #include <iostream>
 #include <raylib.h>
+#include <cstdlib> // for rand and srand
+#include <ctime>   // for seeding srand
 
 using namespace std;
 
@@ -11,6 +13,9 @@ int main()
     // Initialization
     InitWindow(screenWidth, screenHeight, "ping pong game");
     SetTargetFPS(60);
+
+    // Seed the random number generator
+    srand(static_cast<unsigned int>(time(0)));
 
     // Ball starting position and velocity
     float ballX = screenWidth / 2.0f;
@@ -27,11 +32,16 @@ int main()
     const int playerBoardHeight = 100;
 
     // AI paddle
-    const int AIBoardX = screenWidth - 15; // Adjusted to be on the right edge
+    const int AIBoardX = screenWidth - 15;
     int AIBoardY = screenHeight / 2 - 50;
     const int AIBoardWidth = 15;
     const int AIBoardHeight = 100;
-    
+
+    // Erratic movement and miss chance variables
+    int missChance = 10; // Adjust this for frequency of misses (e.g., 10 for 10% chance)
+    bool shouldMiss = false;
+    int erraticMovement = 0; // To store random "wobble" direction
+
     // Main game loop
     while (!WindowShouldClose())
     {
@@ -39,14 +49,21 @@ int main()
         ballX += velocityX;
         ballY += velocityY;
 
-        // Update AI paddle position
-        if (ballY < AIBoardY + AIBoardHeight / 2 && AIBoardY > 0)
+        // Randomly decide if AI should miss or move erratically
+        shouldMiss = (rand() % 100 < missChance); // Chance to miss the ball
+        erraticMovement = (rand() % 3) - 1; // -1, 0, or +1 for slight movement variance
+
+        // Update AI paddle position with chance of missing and erratic movement
+        if (!shouldMiss)
         {
-            AIBoardY -= 5;
-        }
-        if (ballY > AIBoardY + AIBoardHeight / 2 && AIBoardY < screenHeight - AIBoardHeight)
-        {
-            AIBoardY += 5;
+            if (ballY < AIBoardY + AIBoardHeight / 2 && AIBoardY > 0)
+            {
+                AIBoardY -= (5 + erraticMovement); // Move up with random fluctuation
+            }
+            else if (ballY > AIBoardY + AIBoardHeight / 2 && AIBoardY < screenHeight - AIBoardHeight)
+            {
+                AIBoardY += (5 + erraticMovement); // Move down with random fluctuation
+            }
         }
 
         // Check for collision with the player paddle
@@ -64,7 +81,7 @@ int main()
             velocityX = -velocityX;
             ballX = AIBoardX - AIBoardWidth; // Prevent the ball from getting stuck
         }
-        
+
         // Check for collision with the right edge of the screen
         if (ballX >= screenWidth)
         {
@@ -72,7 +89,7 @@ int main()
             ballY = screenHeight / 2;
             playerScore++;
         }
-        
+
         // Check for collision with the left edge of the screen (missed by the player)
         if (ballX <= 0)
         {
